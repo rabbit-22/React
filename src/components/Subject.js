@@ -4,7 +4,7 @@ class Subject extends Component{ //Subject라는 컴포넌트
       // 최상위 태그가 필요함
       return (
         <header>  
-            <h1>{this.props.title}</h1>  
+            <h1><a href="/">{this.props.title}</a></h1>  
             {this.props.sub}
         </header>
       );
