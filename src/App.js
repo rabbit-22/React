@@ -2,9 +2,11 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component } from 'react';
 import TOC from './components/TOC';
-import Content from './components/Content';
 import Subject from './components/Subject';
 import MainWrap from './components/MainWrap';
+import Control from './components/Control';
+import ReadContent from './components/ReadContent';
+import CreateContent from './components/CreateContent';
 
 class App extends Component{
   constructor(props){ 
@@ -26,10 +28,11 @@ class App extends Component{
         페이지가 state와 props에 맞게 다시 출력됨 (싱글 페이지 웹앱)
     */
   render(){
-    var _title, _desc = null;
+    var _title, _desc, _article = null;
     if(this.state.mode === 'welcome'){
       _title = this.state.welcome.title;
       _title = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
     } else if(this.state.mode ==='read'){  // mode를 바꿀 때마다 title과 desc가 달라짐
       var i = 0;
       while(i<this.state.contents.length){
@@ -41,8 +44,9 @@ class App extends Component{
         }
         i = i + 1;
       }
-      _title = this.state.contents[0].title;
-      _title = this.state.contents[0].desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
+    } else if(this.state.mode==='create'){
+      _article = <CreateContent></CreateContent>
     }
     return (
       <div className="App">
@@ -60,8 +64,14 @@ class App extends Component{
               selected_content_id:Number(id)
             });
         }.bind(this)} 
-        data={this.state.contents}></TOC>
-        <Content title={_title} desc={_desc}></Content>
+        data={this.state.contents}>
+        </TOC>
+        <Control onChangeMode={function(_mode){
+          this.setState({
+            mode:_mode
+          })
+        }.bind(this)}></Control>
+        {_article}
         <MainWrap></MainWrap>
       </div>
     );
