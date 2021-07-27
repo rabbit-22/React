@@ -11,8 +11,9 @@ import CreateContent from './components/CreateContent';
 class App extends Component{
   constructor(props){ 
     super(props); // 어떤 컴포넌트가 실행될때 render()보다 먼저 실행되면서 초기화를 담당하는 코드를 cunstructor 안에 작성
+    this.max_content_id = 3;
     this.state = { // 상위 컴포넌트의 state 값을 하위 컴포넌트의 props값으로 전달하는 것은 얼마든지 가능하다
-      mode:'read', // 현재 보고 있는 페이지가 welcome 페이인지 read 페이지인지 구분하기 위함
+      mode:'create', // 기본 모드를 create로 설정
       selected_content_id:2,
       subject:{title:'WEB', sub:'World WIde Web!'},
       welcome:{title:'Welcome', desc:'Hello, React!!!'}, // 모드가 welcome일 때
@@ -46,7 +47,17 @@ class App extends Component{
       }
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>
     } else if(this.state.mode==='create'){
-      _article = <CreateContent></CreateContent>
+      _article = <CreateContent onSubmit={function(_title, _desc){ // submit누를 시 contents 항목 추가
+        // add content to this.state.contents
+        this.max_content_id++;
+        var _contents = this.state.contents.concat({
+        // state 값을 추가할 때는 push()와 같이 원본 데이터를 변경하는 함수 쓰지 말기. concat()처럼 새로운 데이터를 추가하는 것을 사용
+          id:this.max_content_id, title:_title, desc:_desc
+        });
+        this.setState({
+          contents:_contents
+        });
+      }.bind(this)}></CreateContent>
     }
     return (
       <div className="App">
