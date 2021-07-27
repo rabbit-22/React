@@ -11,6 +11,7 @@ class App extends Component{
     super(props); // 어떤 컴포넌트가 실행될때 render()보다 먼저 실행되면서 초기화를 담당하는 코드를 cunstructor 안에 작성
     this.state = { // 상위 컴포넌트의 state 값을 하위 컴포넌트의 props값으로 전달하는 것은 얼마든지 가능하다
       mode:'read', // 현재 보고 있는 페이지가 welcome 페이인지 read 페이지인지 구분하기 위함
+      selected_content_id:2,
       subject:{title:'WEB', sub:'World WIde Web!'},
       welcome:{title:'Welcome', desc:'Hello, React!!!'}, // 모드가 welcome일 때
       contents:[
@@ -30,6 +31,16 @@ class App extends Component{
       _title = this.state.welcome.title;
       _title = this.state.welcome.desc;
     } else if(this.state.mode ==='read'){  // mode를 바꿀 때마다 title과 desc가 달라짐
+      var i = 0;
+      while(i<this.state.contents.length){
+        var data = this.state.contents[i];
+        if(data.id === this.state.selected_content_id){
+          _title = data.title;
+          _desc = data.desc;
+          break;
+        }
+        i = i + 1;
+      }
       _title = this.state.contents[0].title;
       _title = this.state.contents[0].desc;
     }
@@ -43,9 +54,11 @@ class App extends Component{
          }.bind(this)}>
         </Subject>
         <TOC 
-          onChangePage={function(){
-            alert('hi');
-            this.setState({mode:'read'});
+          onChangePage={function(id){
+            this.setState({
+              mode:'read',
+              selected_content_id:Number(id)
+            });
         }.bind(this)} 
         data={this.state.contents}></TOC>
         <Content title={_title} desc={_desc}></Content>
