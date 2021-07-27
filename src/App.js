@@ -35,24 +35,19 @@ class App extends Component{
     }
     return (
       <div className="App">
-        {/* <Subject title={this.state.subject.title} sub={this.state.subject.sub}></Subject> */}
-        <header>  
-            <h1><a href="/" onClick={function(e){ //React에서는 onClick={}으로 써야함
-              
-              e.preventDefault(); // 기본적인 동작방법을 금지시킴 (새로고침 되지 않음)
-              // this.state.mode = 'welcome'; (react입장에서는 몰래 바꾼 셈. 동적으로 state 바꾸려면 이렇게 바꾸면 안됨)
-            /*
-              함수 안에서 this는 아무것도 가리키고 있지 않음
-              bind함수 사용: bind(tihs) 추가하면 this는 컴포넌트 객체가 됨 
-             */
-              this.setState({
-                mode:'welcome' // state값을 변경할 때 coonstructor밖에서는 setState함수를 사용해야함
-              });
-              //debugger; 중단점
-            }.bind(this)}>{this.state.subject.title}</a></h1>  
-            {this.state.subject.sub}
-        </header>
-        <TOC data={this.state.contents}></TOC>
+        <Subject
+         title={this.state.subject.title} 
+         sub={this.state.subject.sub}
+         onChangePage={function(){
+            this.setState({mode:'welcome'}); 
+         }.bind(this)}>
+        </Subject>
+        <TOC 
+          onChangePage={function(){
+            alert('hi');
+            this.setState({mode:'read'});
+        }.bind(this)} 
+        data={this.state.contents}></TOC>
         <Content title={_title} desc={_desc}></Content>
         <MainWrap></MainWrap>
       </div>
