@@ -14,7 +14,7 @@ class App extends Component{
     super(props); // 어떤 컴포넌트가 실행될때 render()보다 먼저 실행되면서 초기화를 담당하는 코드를 cunstructor 안에 작성
     this.max_content_id = 3;
     this.state = { // 상위 컴포넌트의 state 값을 하위 컴포넌트의 props값으로 전달하는 것은 얼마든지 가능하다
-      mode:'create', // 기본 모드를 create로 설정
+      mode:'welcome', // 기본 모드를 welcome로 설정
       selected_content_id:2,
       subject:{title:'WEB', sub:'World WIde Web!'},
       welcome:{title:'Welcome', desc:'Hello, React!!!'}, 
@@ -102,9 +102,28 @@ render(){
         data={this.state.contents}>
         </TOC>
         <Control onChangeMode={function(_mode){
-          this.setState({
-            mode:_mode
-          })
+          if(_mode === 'delete'){
+            if(window.confirm('really?')){
+              var _contents = Array.from(this.state.contents);
+              var i = 0;
+              while(i < this.state.contents.length){
+                if(_contents[i].id === this.state.selected_content_id){
+                  _contents.splice(i, 1); // id값 부터 한 개를 지우겠다는 뜻
+                  break;
+                }
+                i = i + 1;
+              }
+              this.setState({
+                mode:'welcome',
+                contents:_contents
+              });
+              alert('deleted!');
+            }
+          }else {
+            this.setState({
+              mode:_mode
+            });
+          }
         }.bind(this)}></Control>
         {this.getContent()}
         <MainWrap></MainWrap>
