@@ -7,6 +7,7 @@ import MainWrap from './components/MainWrap';
 import Control from './components/Control';
 import ReadContent from './components/ReadContent';
 import CreateContent from './components/CreateContent';
+import UpdateContent from './components/UpdateContent';
 
 class App extends Component{
   constructor(props){ 
@@ -24,39 +25,65 @@ class App extends Component{
       ] 
     } 
   } 
-  render(){
-    var _title, _desc, _article = null;
-    if(this.state.mode === 'welcome'){
-      _title = this.state.welcome.title;
-      _title = this.state.welcome.desc;
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
-    } else if(this.state.mode ==='read'){ 
-      var i = 0;
-      while(i<this.state.contents.length){
-        var data = this.state.contents[i];
-        if(data.id === this.state.selected_content_id){
-          _title = data.title;
-          _desc = data.desc;
-          break;
-        }
-        i = i + 1;
+getReadContent(){
+  var i = 0;
+    while(i<this.state.contents.length){
+      var data = this.state.contents[i];
+      if(data.id === this.state.selected_content_id){
+        return data;
+        break;
       }
-      _article = <ReadContent title={_title} desc={_desc}></ReadContent>
-    } else if(this.state.mode==='create'){
-      _article = <CreateContent onSubmit={function(_title, _desc){ // submit누를 시 contents 항목 추가
-        // add content to this.state.contents
-        this.max_content_id++;
-        var _contents = this.state.contents.concat({
-        /* state 값을 추가할 때는 push()와 같이 원본 데이터를 변경하는 함수 쓰지 말기
-        concat()처럼 새로운 데이터를 추가하는 것을 사용 */
-          id:this.max_content_id, title:_title, desc:_desc
-        });
-        this.setState({
-          contents:_contents
-        });
-      }.bind(this)}></CreateContent>
+      i = i + 1;
     }
-    return (
+}
+getContent(){
+  var _title, _desc, _article = null;
+  if(this.state.mode === 'welcome'){
+    _title = this.state.welcome.title;
+    _title = this.state.welcome.desc;
+    _article = <ReadContent title={_title} desc={_desc}></ReadContent>
+  } 
+  else if(this.state.mode ==='read'){ 
+    var _content = this.getReadContent();
+    _article = <ReadContent title={_content.title} desc={_content.desc}></ReadContent>
+  } 
+  else if(this.state.mode==='create'){
+    _article = <CreateContent onSubmit={function(_title, _desc){ 
+      this.max_content_id++;
+      var _contents = Array.from(this.state.contents); 
+      // 객체를 바꾸고싶으면 Array.assign, 배열을 바꾸고 싶으면 Array.from
+      _contents.push({id:this.max_content_id, title:_title, desc:_desc});
+      // push를 사용하고 싶다면 원본을 복제하여 수정한 값을 할당 (immutable.js 등 라이브러리 활용도 가능)
+      this.setState({
+        contents:_contents,
+        mode:'read'
+      });
+    }.bind(this)}></CreateContent>
+  } 
+  else if(this.state.mode === 'update'){
+    _content = this.getReadContent();
+    _article = <UpdateContent data={_content} onSubmit={
+      function(_id, _title, _desc){ 
+        var _id = _content.id; 
+        var _contents = Array.from(this.state.contents); // 배열이나 객체를 수정하려고 할때는 복제한 후 수정한다 
+        var i = 0;
+        while(i < _contents.length){
+          if(_contents[i].id === _id){
+            _contents[i] = {id:_id, title:_title, desc:_desc};
+            break;
+          }
+          i = i + 1;
+        }
+        this.setState({
+          contents:_contents,
+          mode:'read'
+        });
+    }.bind(this)}></UpdateContent>
+  }
+  return _article;
+}
+render(){
+  return (
       <div className="App">
         <Subject
          title={this.state.subject.title} 
@@ -79,7 +106,7 @@ class App extends Component{
             mode:_mode
           })
         }.bind(this)}></Control>
-        {_article}
+        {this.getContent()}
         <MainWrap></MainWrap>
       </div>
     );
