@@ -16,25 +16,21 @@ class App extends Component{
       mode:'create', // 기본 모드를 create로 설정
       selected_content_id:2,
       subject:{title:'WEB', sub:'World WIde Web!'},
-      welcome:{title:'Welcome', desc:'Hello, React!!!'}, // 모드가 welcome일 때
+      welcome:{title:'Welcome', desc:'Hello, React!!!'}, 
       contents:[
         {id:1, title:'HTML', desc:'HTML is  for information ...'},
         {id:2, title:'CSS', desc:'CSS is  for design ...'},
         {id:3, title:'JavaScript', desc:'JavaScript is for interactive ...'}
       ] 
     } 
-  } /* React에서는 props값이나 state 값이 바뀌면 그 state를 가지고 있는 컴포넌트의 render() 함수가 다시 호출됨 
-       render() 함수 하위에 있는 컴포넌트의 render()함수도 다시 호출됨 (화면이 다시 그려짐) 
-        => 링크를 클릭했을 때 다른 url을 타고 이동하지 않고 event를 발생시켜 state와 props를 변경함으로써
-        페이지가 state와 props에 맞게 다시 출력됨 (싱글 페이지 웹앱)
-    */
+  } 
   render(){
     var _title, _desc, _article = null;
     if(this.state.mode === 'welcome'){
       _title = this.state.welcome.title;
       _title = this.state.welcome.desc;
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>
-    } else if(this.state.mode ==='read'){  // mode를 바꿀 때마다 title과 desc가 달라짐
+    } else if(this.state.mode ==='read'){ 
       var i = 0;
       while(i<this.state.contents.length){
         var data = this.state.contents[i];
@@ -51,7 +47,8 @@ class App extends Component{
         // add content to this.state.contents
         this.max_content_id++;
         var _contents = this.state.contents.concat({
-        // state 값을 추가할 때는 push()와 같이 원본 데이터를 변경하는 함수 쓰지 말기. concat()처럼 새로운 데이터를 추가하는 것을 사용
+        /* state 값을 추가할 때는 push()와 같이 원본 데이터를 변경하는 함수 쓰지 말기
+        concat()처럼 새로운 데이터를 추가하는 것을 사용 */
           id:this.max_content_id, title:_title, desc:_desc
         });
         this.setState({
